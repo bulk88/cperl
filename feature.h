@@ -13,7 +13,8 @@
 #define FEATURE_BUNDLE_510	1
 #define FEATURE_BUNDLE_511	2
 #define FEATURE_BUNDLE_515	3
-#define FEATURE_BUNDLE_523	4
+#define FEATURE_BUNDLE_521	4
+#define FEATURE_BUNDLE_523	5
 #define FEATURE_BUNDLE_CUSTOM	(HINT_FEATURE_MASK >> HINT_FEATURE_SHIFT)
 
 #define CURRENT_HINTS \
@@ -28,7 +29,7 @@
 	   & HINT_LOCALIZE_HH)						  \
 	    ? Perl_feature_is_enabled(aTHX_ STR_WITH_LEN(name)) : FALSE)
 /* The longest string we pass in.  */
-#define MAX_FEATURE_LEN (sizeof("postderef_qq")-1)
+#define MAX_FEATURE_LEN (sizeof("sized_arrays")-1)
 
 #define FEATURE_FC_IS_ENABLED \
     ( \
@@ -122,6 +123,14 @@
 	 FEATURE_IS_ENABLED("postderef_qq")) \
     )
 
+#define FEATURE_SIZED_ARRAYS_IS_ENABLED \
+    ( \
+	(CURRENT_FEATURE_BUNDLE >= FEATURE_BUNDLE_521 && \
+	 CURRENT_FEATURE_BUNDLE <= FEATURE_BUNDLE_523) \
+     || (CURRENT_FEATURE_BUNDLE == FEATURE_BUNDLE_CUSTOM && \
+	 FEATURE_IS_ENABLED("sized_arrays")) \
+    )
+
 #define FEATURE_UNIEVAL_IS_ENABLED \
     ( \
 	(CURRENT_FEATURE_BUNDLE >= FEATURE_BUNDLE_515 && \
@@ -151,6 +160,9 @@ S_enable_feature_bundle(pTHX_ SV *ver)
 		  (sv_setnv(comp_ver, 5.023),
 		   vcmp(ver, upg_version(comp_ver, FALSE)) >= 0)
 			? FEATURE_BUNDLE_523 :
+		  (sv_setnv(comp_ver, 5.021),
+		   vcmp(ver, upg_version(comp_ver, FALSE)) >= 0)
+			? FEATURE_BUNDLE_521 :
 		  (sv_setnv(comp_ver, 5.015),
 		   vcmp(ver, upg_version(comp_ver, FALSE)) >= 0)
 			? FEATURE_BUNDLE_515 :
