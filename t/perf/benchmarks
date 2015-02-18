@@ -242,7 +242,6 @@
         code    => 'index $x, "b"',
     },
 
-
     # list assign, OP_AASSIGN
 
 
@@ -622,4 +621,26 @@
     },
 
 
+    'expr::fast_arith::add_o' => {
+        desc    => 'fast overflow to double with add',
+        setup   => 'my $a = 1<<$Config{ivsize}*8 - 1; my $b = 1',
+        code    => '$a + $b',
+    },
+    'expr::fast_arith::multiply_o' => {
+        desc    => 'fast overflow to double with multiply',
+        setup   => 'my $a = 1<<$Config{ivsize}*8 - 1; my $b = 2',
+        code    => '$a * $b',
+    },
+    'expr::fast_arith::add' => {
+        desc    => 'fast arithmetic with add',
+        setup   => 'my $a = 0xFF; my $b = 1',
+        code    => '$a + $b',
+    },
+    'expr::fast_arith::multiply' => {
+        desc    => 'fast arithmetic with multiply',
+        setup   => 'my $a = 0xFF; my $b = 2',
+        code    => '$a * $b',
+    },
+
+ 
 ];
