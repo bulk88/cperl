@@ -231,6 +231,7 @@ PERL_CALLCONV void	Perl_blockhook_register(pTHX_ BHK *hk);
 PERL_CALLCONV void	Perl_boot_core_PerlIO(pTHX);
 PERL_CALLCONV void	Perl_boot_core_UNIVERSAL(pTHX);
 PERL_CALLCONV void	Perl_boot_core_mro(pTHX);
+PERL_CALLCONV void	Perl_boot_core_xsutils(pTHX);
 PERL_CALLCONV int	Perl_bytes_cmp_utf8(pTHX_ const U8 *b, STRLEN blen, const U8 *u, STRLEN ulen);
 #define PERL_ARGS_ASSERT_BYTES_CMP_UTF8	\
 	assert(b); assert(u)
