@@ -65,6 +65,7 @@ POD = perl.pod	\
 	perlcheat.pod	\
 	perlclib.pod	\
 	perlcommunity.pod	\
+	perlcperl.pod	\
 	perldata.pod	\
 	perldbmfilter.pod	\
 	perldebguts.pod	\
@@ -139,6 +140,7 @@ POD = perl.pod	\
 	perltooc.pod	\
 	perltoot.pod	\
 	perltrap.pod	\
+	perltypes.pod	\
 	perlunicode.pod	\
 	perlunicook.pod	\
 	perlunifaq.pod	\
@@ -202,6 +204,7 @@ MAN = perl.man	\
 	perlcheat.man	\
 	perlclib.man	\
 	perlcommunity.man	\
+	perlcperl.man	\
 	perldata.man	\
 	perldbmfilter.man	\
 	perldebguts.man	\
@@ -276,6 +279,7 @@ MAN = perl.man	\
 	perltooc.man	\
 	perltoot.man	\
 	perltrap.man	\
+	perltypes.man	\
 	perlunicode.man	\
 	perlunicook.man	\
 	perlunifaq.man	\
@@ -339,6 +343,7 @@ HTML = perl.html	\
 	perlcheat.html	\
 	perlclib.html	\
 	perlcommunity.html	\
+	perlcperl.html	\
 	perldata.html	\
 	perldbmfilter.html	\
 	perldebguts.html	\
@@ -412,6 +417,7 @@ HTML = perl.html	\
 	perltooc.html	\
 	perltoot.html	\
 	perltrap.html	\
+	perltypes.html	\
 	perlunicode.html	\
 	perlunicook.html	\
 	perlunifaq.html	\
@@ -476,6 +482,7 @@ TEX = perl.tex	\
 	perlcheat.tex	\
 	perlclib.tex	\
 	perlcommunity.tex	\
+	perlcperl.tex	\
 	perldata.tex	\
 	perldbmfilter.tex	\
 	perldebguts.tex	\
@@ -550,6 +557,7 @@ TEX = perl.tex	\
 	perltooc.tex	\
 	perltoot.tex	\
 	perltrap.tex	\
+	perltypes.tex	\
 	perlunicode.tex	\
 	perlunicook.tex	\
 	perlunifaq.tex	\
