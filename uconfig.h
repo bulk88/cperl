@@ -4779,6 +4779,34 @@
  */
 #define LDLIBPTHNAME 	""		/**/
 
+
+/* PATH_SEP:
+ *	This symbol indicates the character used to separate elements
+ *      in the command shell search PATH.
+ */
+#define PATH_SEP 	":"		/**/
+
+/* DLEXT:
+ *	This symbol indicates the extension that is to be used for the
+ *	dynamically loaded modules that perl generates. The "." is included.
+ */
+/* DLSO:
+ *	This variable holds the extension used to identify shared libraries
+ *	(also known as shared objects) to be linked on the system. Usually set to '.so'.
+ *      E.g. On darwin "dylib" vs. "bundle" for DLEXT.
+ */
+/* DLSRC:
+ *	This variable contains the name of the dynamic loading file that
+	will be used with the package.
+ */
+/* DL_SO_EQ_EXT:
+ *	This variable is defined if DLEXT equals DLSO.
+ */
+#define DLEXT 	".so"		/**/
+#define DLSO 	".so"			/**/
+#define DLSRC 	"dl_none.xs"		/**/
+#define DL_SO_EQ_EXT 		/**/
+
 /* DOUBLEINFBYTES:
  *	This symbol, if defined, is a comma-separated list of
  *	hexadecimal bytes for the double precision infinity.
@@ -5239,6 +5267,6 @@
 #endif
 
 /* Generated from:
- * eab9d33c4513b9c3a68c68175f704b77ca69e859f0e7abe359c1b93edeb3b91b config_h.SH
- * 048d27b7db8b82dcc50c0376655770d8c49cbc4b68825cbb302f774f8f9f8b3a uconfig.sh
+ * fb812272d52931f7a599bfcc24ea0b9779a36ddd0bbc11be9b8766aad2f54bc3 config_h.SH
+ * 30683b5fda2b5642c67b352cfb09d5458df890f0da678db606833d4181293c56 uconfig.sh
  * ex: set ro: */
