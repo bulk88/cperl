@@ -4523,6 +4523,11 @@
  */
 /*#define HAS_USTAT		/ **/
 
+/* HAS_VMS_CASE_SENSITIVE_SYMBOLS:
+ *	This symbol, if defined, indicates case sensitive symbols on VMS.
+ */
+/*#define HAS_VMS_CASE_SENSITIVE_SYMBOLS	/ **/
+
 /* HAS_WCSCMP:
  *	This symbol, if defined, indicates that the wcscmp routine is
  *	available to compare two wide character strings.
@@ -4765,6 +4770,14 @@
  *	should be included.
  */
 /*#define	I_USTAT		/ **/
+
+/* LDLIBPTHNAME:
+ *	This symbol indicates the name of the shared library
+	search path. On a unix typically LD_LIBRARY_PATH, LIBPATH,
+        SHLIB_PATH, LD_LIBRARYN32_PATH or LD_LIBRARYN64_PATH,
+        on darwin DYLD_LIBRARY_PATH. It might be an empty string.
+ */
+#define LDLIBPTHNAME 	""		/**/
 
 /* DOUBLEINFBYTES:
  *	This symbol, if defined, is a comma-separated list of
@@ -5226,6 +5239,6 @@
 #endif
 
 /* Generated from:
- * 5c7f5f4ef628e94062ba53326882f92dfe0815f7b091da65019067f7eca9128d config_h.SH
- * 89be4a694379d2accd34b1e4bc2e418a315631a1533b4b1aab4fa418cda57fab uconfig.sh
+ * eab9d33c4513b9c3a68c68175f704b77ca69e859f0e7abe359c1b93edeb3b91b config_h.SH
+ * 048d27b7db8b82dcc50c0376655770d8c49cbc4b68825cbb302f774f8f9f8b3a uconfig.sh
  * ex: set ro: */

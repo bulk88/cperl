@@ -4806,6 +4806,14 @@ sed <<!GROK!THIS! >$CONFIG_H -e 's!^#undef\(.*/\)\*!/\*#define\1 \*!' -e 's!^#un
  */
 #$i_ustat	I_USTAT		/**/
 
+/* LDLIBPTHNAME:
+ *	This symbol indicates the name of the shared library
+	search path. On a unix typically LD_LIBRARY_PATH, LIBPATH,
+        SHLIB_PATH, LD_LIBRARYN32_PATH or LD_LIBRARYN64_PATH,
+        on darwin DYLD_LIBRARY_PATH. It might be an empty string.
+ */
+#define LDLIBPTHNAME 	"$ldlibpthname"		/**/
+
 /* DOUBLEINFBYTES:
  *	This symbol, if defined, is a comma-separated list of
  *	hexadecimal bytes for the double precision infinity.
