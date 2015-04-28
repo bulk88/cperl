@@ -49,7 +49,7 @@ done
 #      feature/CM-368-cperl-dynaloader-builtin feature/CM-445-cperl-xsloader-builtin
 # unstable side-branches, branching off somewhere
 #rb feature/CM-316-cperl-fast-arithmetic-use-new-intrinsics master
-rb feature/CM-714-cperl-enterxssub-safe master
+#rb feature/CM-714-cperl-enterxssub-safe master
 rb feature/CM-626-cperl-use-dots master
 rb feature/CM-317-cperl-signatures master
 rb feature/CM-317-cperl-signatures3 master
