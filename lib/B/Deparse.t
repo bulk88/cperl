@@ -56,6 +56,7 @@ while (<DATA>) {
     else {
 	($input, $expected) = ($_, $_);
     }
+    $input =~ s/\n\n$/\n/m;
 
     # parse options if necessary
     my $deparse = $meta{options}
