@@ -3438,6 +3438,13 @@
 /*#define HAS_BUILTIN_EXPECT	/ **/
 /*#define HAS_BUILTIN_CHOOSE_EXPR	/ **/
 
+/* HAS_BUILTIN_ARITH_OVERFLOW:
+ *	This symbol is defined if the compiler supports the intrinsics
+ *	__builtin_saddl_overflow() for signed and unsigned IV sizes.
+ *      GCC since 5.0, clang since 3.6
+ */
+/*#define HAS_BUILTIN_ARITH_OVERFLOW	/ **/
+
 /* HAS_C99_VARIADIC_MACROS:
  *	If defined, the compiler supports C99 variadic macros.
  */
@@ -5267,6 +5274,6 @@
 #endif
 
 /* Generated from:
- * fb812272d52931f7a599bfcc24ea0b9779a36ddd0bbc11be9b8766aad2f54bc3 config_h.SH
- * 62fe5cc4f4d52a1a41889d5009338fc6c28e8a463067e8123046e52248a5183f uconfig.sh
+ * 15e9c38c8e4d8368bc630e0240c841a856fb69b19a82db2ca1daa00c0369241d config_h.SH
+ * ba30f10bfa4984711e260e165a563723c12ba7279c60ba9db8f70ec06aa4d909 uconfig.sh
  * ex: set ro: */
