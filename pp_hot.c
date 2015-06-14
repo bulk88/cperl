@@ -3109,8 +3109,7 @@ PP(pp_entersub)
     }
     if (CvISXSUB(cv)) {
         /* dynamically bootstrapped XS. goto to the XS variant */
-        PL_op->op_type = OP_ENTERXSSUB;
-        PL_op->op_ppaddr = PL_ppaddr[OP_ENTERXSSUB];
+        OpTYPE_set(PL_op, OP_ENTERXSSUB);
         return PL_op->op_ppaddr(aTHX);
     }
 
@@ -3184,8 +3183,7 @@ PP(pp_entersub)
 
         /* A XS function can be redefined back to a normal sub */
         if (PL_op->op_type != OP_ENTERSUB) {
-            PL_op->op_type = OP_ENTERSUB;
-            PL_op->op_ppaddr = PL_ppaddr[OP_ENTERSUB];
+            OpTYPE_set(PL_op, OP_ENTERSUB);
         }
 
 	PUSHBLOCK(cx, CXt_SUB, MARK);
@@ -3253,9 +3251,8 @@ PP(pp_entersub)
 	    sub_crush_depth(cv);
 	RETURNOP(CvSTART(cv));
     }
-    else { /* XS code: change this op type and goto enterxssub */
-        PL_op->op_type = OP_ENTERXSSUB;
-        PL_op->op_ppaddr = PL_ppaddr[OP_ENTERXSSUB];
+    else { /* goto enterxssub */
+        OpTYPE_set(PL_op, OP_ENTERXSSUB);
         return PL_op->op_ppaddr(aTHX);
     }
 }
@@ -3263,17 +3260,19 @@ PP(pp_entersub)
 PP(pp_enterxssub)
 {
     dSP; dPOPss;
-    CV *cv = MUTABLE_CV(sv);
-    /*PERL_CONTEXT *cx;
-      GV *gv;*/
     const bool hasargs = (PL_op->op_flags & OPf_STACKED) != 0;
+    CV *cv;
+    GV *gv;
 
-    /* enterxssub can only be called with an cv. entersub allows more */
-    if (UNLIKELY(!cv || (SvTYPE(cv) != SVt_PVCV)))
+    if (UNLIKELY(!sv))
 	DIE(aTHX_ "Not a CODE reference");
-#if 0
-    if (0 && (!LIKELY(SvTYPE(sv) == SVt_PVGV) && (cv = GvCVu((const GV *)sv)))) {
+    /* only when a XS was being replaced by a PP sub */
+    if (!(UNLIKELY(SvTYPE(sv) == SVt_PVGV) && (cv = GvCVu((const GV *)sv)))) {
         switch (SvTYPE(sv)) {
+        case SVt_PVCV:
+            cv = MUTABLE_CV(sv);
+            break;
+        /* This is the second most common case:  */
         case SVt_PVGV:
           we_have_a_glob:
             if (!(cv = GvCVu((const GV *)sv))) {
@@ -3281,14 +3280,8 @@ PP(pp_enterxssub)
                 cv = sv_2cv(sv, &stash, &gv, 0);
             }
             if (!cv) {
-                ENTER;
-                SAVETMPS;
-                goto try_autoload;
+                DIE(aTHX_ "Not a CODE reference");
             }
-            break;
-        /* This is the second most common case:  */
-        case SVt_PVCV:
-            cv = MUTABLE_CV(sv);
             break;
         case SVt_PVLV:
             if(isGV_with_GP(sv)) goto we_have_a_glob;
@@ -3328,13 +3321,11 @@ PP(pp_enterxssub)
             DIE(aTHX_ "Not a CODE reference");
         }
     }
-#endif
 
     /* There's no way to unbootstrap a XS function. Is there?
-       Yes, by dynamic sub redefinition, which we have to catch there. */
+       Yes there is, by dynamic sub redefinition. */
     if (!CvISXSUB(cv)) {
-        PL_op->op_type = OP_ENTERSUB;
-        PL_op->op_ppaddr = PL_ppaddr[OP_ENTERSUB];
+        OpTYPE_set(PL_op, OP_ENTERSUB);
         return PL_op->op_ppaddr(aTHX);
     }
 
