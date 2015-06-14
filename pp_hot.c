@@ -3107,9 +3107,15 @@ PP(pp_entersub)
             DIE(aTHX_ "Not a CODE reference");
         }
     }
-    if (CvISXSUB(cv)) {
+    if (CvISXSUB(cv) && CvROOT(cv)) {
         /* dynamically bootstrapped XS. goto to the XS variant */
         OpTYPE_set(PL_op, OP_ENTERXSSUB);
+        ++sp; /* and fixup stack */
+#ifdef DEBUGGING
+        if (DEBUG_t_TEST_) debop(PL_op);
+#else
+        OP_ENTRY_PROBE(OP_NAME(PL_op));
+#endif
         return PL_op->op_ppaddr(aTHX);
     }
 
@@ -3182,8 +3188,15 @@ PP(pp_entersub)
         I32 depth;
 
         /* A XS function can be redefined back to a normal sub */
-        if (PL_op->op_type != OP_ENTERSUB) {
+        if (PL_op->op_type == OP_ENTERXSSUB) {
             OpTYPE_set(PL_op, OP_ENTERSUB);
+            INCMARK; ++sp; /* and fixup stack */
+#ifdef DEBUGGING
+            if (DEBUG_v_TEST_) Perl_deb(aTHX_ "\nXS->PP %s\n", GvNAME(CvGV(cv)));
+            if (DEBUG_t_TEST_) debop(PL_op);
+#else
+            OP_ENTRY_PROBE(OP_NAME(PL_op));
+#endif
         }
 
 	PUSHBLOCK(cx, CXt_SUB, MARK);
@@ -3253,6 +3266,12 @@ PP(pp_entersub)
     }
     else { /* goto enterxssub */
         OpTYPE_set(PL_op, OP_ENTERXSSUB);
+        *(++sp) = (SV*)cv; /* and fixup arg */
+#ifdef DEBUGGING
+        if (DEBUG_t_TEST_) debop(PL_op);
+#else
+        OP_ENTRY_PROBE(OP_NAME(PL_op));
+#endif
         return PL_op->op_ppaddr(aTHX);
     }
 }
@@ -3295,8 +3314,8 @@ PP(pp_enterxssub)
                 RETURN;
             }
             SvGETMAGIC(sv);
-            if (SvROK(sv)) {
-                if (SvAMAGIC(sv)) {
+            if (LIKELY(SvROK(sv))) { /* 2nd most common case. RV -> CV */
+                if (UNLIKELY(SvAMAGIC(sv))) {
                     sv = amagic_deref_call(sv, to_cv_amg);
                     /* Don't SPAGAIN here.  */
                 }
@@ -3313,7 +3332,7 @@ PP(pp_enterxssub)
                 break;
             }
             cv = MUTABLE_CV(SvRV(sv));
-            if (SvTYPE(cv) == SVt_PVCV)
+            if (LIKELY(SvTYPE(cv) == SVt_PVCV))
                 break;
             /* FALLTHROUGH */
         case SVt_PVHV:
@@ -3326,6 +3345,12 @@ PP(pp_enterxssub)
        Yes there is, by dynamic sub redefinition. */
     if (!CvISXSUB(cv)) {
         OpTYPE_set(PL_op, OP_ENTERSUB);
+        *(++sp) = (SV*)cv; /* and fixup arg */
+#ifdef DEBUGGING
+        if (DEBUG_t_TEST_) debop(PL_op);
+#else
+        OP_ENTRY_PROBE(OP_NAME(PL_op));
+#endif
         return PL_op->op_ppaddr(aTHX);
     }
 
