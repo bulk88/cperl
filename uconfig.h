@@ -5271,9 +5271,16 @@
 /*#define	USE_CPERL		/ **/
 #endif
 
+/* PERL_HASH_FUNC_*:
+ *	This symbol, if defined, defines the used perl hash function variant.
+ */
+#ifndef PERL_HASH_FUNC_FNV1A
+#define	PERL_HASH_FUNC_FNV1A	/**/
+#endif
+
 #endif
 
 /* Generated from:
- * 15e9c38c8e4d8368bc630e0240c841a856fb69b19a82db2ca1daa00c0369241d config_h.SH
- * ba30f10bfa4984711e260e165a563723c12ba7279c60ba9db8f70ec06aa4d909 uconfig.sh
+ * 582dae7d9b465b441b413d7fa693c3592ca65e8cea65d5d3c37976e026617380 config_h.SH
+ * 3f1968edf63131b2d3c1682a35d219f2a3440c1c04da1a410b40a56718d85367 uconfig.sh
  * ex: set ro: */
