@@ -5225,9 +5225,16 @@
 /*#define	USE_CPERL		/ **/
 #endif
 
+/* PERL_HASH_FUNC_*:
+ *	This symbol, if defined, defines the used perl hash function variant.
+ */
+#ifndef PERL_HASH_FUNC_MURMUR3
+#define	PERL_HASH_FUNC_MURMUR3	/**/
+#endif
+
 #endif
 
 /* Generated from:
- * ea39bd0b7603a9b92f7fe460c8458cde1b8014049ef54aa8c983510baed96913 config_h.SH
- * 6bcee9a8220c9290a11ef97f977a9a2b99b1b1f9560c6e463398330d1095f663 uconfig.sh
+ * e80ff83cfe9c9a9f90be18ffcb87159b95634e83aa46e6e8f51bc87dfe8f0e3a config_h.SH
+ * 9d0888eb4d32105c593d46e8e7b0664aabd3838287b3a0eaa9cfdaef095a6cf8 uconfig.sh
  * ex: set ro: */
