@@ -131,6 +131,13 @@ PERL_CALLCONV void PerlIO_clone(pTHX_ PerlInterpreter *proto,
 
 /* ----------- fill in things that have not got #define'd  ---------- */
 
+/* STDIN, STDOUT, STDERR, and PERLIO_DEBUG */
+#ifdef DEBUGGING
+#define PERLIO_MAX 4
+#else
+#define PERLIO_MAX 3
+#endif
+
 #ifndef Fpos_t
 #define Fpos_t Off_t
 #endif
@@ -294,6 +301,9 @@ PERL_CALLCONV PerlIO *PerlIO_stdout(void);
 #endif
 #ifndef PerlIO_stderr
 PERL_CALLCONV PerlIO *PerlIO_stderr(void);
+#endif
+#ifndef PerlIO_debugio
+PERL_CALLCONV PerlIO *PerlIO_debugio(void);
 #endif
 #ifndef PerlIO_getpos
 PERL_CALLCONV int PerlIO_getpos(PerlIO *, SV *);
