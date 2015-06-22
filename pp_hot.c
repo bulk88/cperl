@@ -3190,7 +3190,7 @@ PP(pp_entersub)
         /* A XS function can be redefined back to a normal sub */
         if (PL_op->op_type == OP_ENTERXSSUB) {
             OpTYPE_set(PL_op, OP_ENTERSUB);
-            INCMARK; ++sp; /* and fixup stack */
+            (void)INCMARK; ++sp; /* and fixup stack */
 #ifdef DEBUGGING
             if (DEBUG_v_TEST_) Perl_deb(aTHX_ "\nXS->PP %s\n", GvNAME(CvGV(cv)));
             if (DEBUG_t_TEST_) debop(PL_op);
