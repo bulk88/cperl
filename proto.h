@@ -419,6 +419,11 @@ PERL_CALLCONV OP *	Perl_ck_open(pTHX_ OP *o)
 #define PERL_ARGS_ASSERT_CK_OPEN	\
 	assert(o)
 
+PERL_CALLCONV OP *	Perl_ck_pad(pTHX_ OP *o)
+			__attribute__warn_unused_result__;
+#define PERL_ARGS_ASSERT_CK_PAD	\
+	assert(o)
+
 PERL_CALLCONV OP *	Perl_ck_prototype(pTHX_ OP *o)
 			__attribute__warn_unused_result__;
 #define PERL_ARGS_ASSERT_CK_PROTOTYPE	\
