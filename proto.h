@@ -525,8 +525,7 @@ PERL_CALLCONV OP *	Perl_ck_trunc(pTHX_ OP *o)
 	assert(o)
 
 PERL_CALLCONV OP *	Perl_ck_type(pTHX_ OP *o)
-			__attribute__warn_unused_result__
-			__attribute__nonnull__(pTHX_1);
+			__attribute__warn_unused_result__;
 #define PERL_ARGS_ASSERT_CK_TYPE	\
 	assert(o)
 
