@@ -120,6 +120,7 @@ our %bits;
 
 our $VERSION = "5.023002";
 
+$bits{$_}{4} = 'OPpBOXRET' for qw(int_abs int_add int_aelem int_complement int_divide int_eq int_ge int_gt int_le int_lt int_modulo int_multiply int_ne int_negate int_not int_postdec int_postinc int_predec int_preinc int_subtract num_add num_aelem num_atan2 num_cos num_divide num_exp num_log num_multiply num_sin num_sqrt num_subtract str_aelem uint_lshift uint_rshift);
 $bits{$_}{3} = 'OPpENTERSUB_AMPER' for qw(entersub enterxssub rv2cv);
 $bits{$_}{6} = 'OPpENTERSUB_DB' for qw(entersub enterxssub rv2cv);
 $bits{$_}{2} = 'OPpENTERSUB_HASTARG' for qw(entersub enterxssub rv2cv);
@@ -618,6 +619,7 @@ our %defines = (
     OPpASSIGN_COMMON_RC1     =>  32,
     OPpASSIGN_COMMON_SCALAR  =>  64,
     OPpASSIGN_CV_TO_GV       => 128,
+    OPpBOXRET                =>  16,
     OPpCONST_BARE            =>  64,
     OPpCONST_ENTERED         =>  16,
     OPpCONST_NOVER           =>   2,
@@ -713,6 +715,7 @@ our %labels = (
     OPpASSIGN_COMMON_RC1     => 'COM_RC1',
     OPpASSIGN_COMMON_SCALAR  => 'COM_SCALAR',
     OPpASSIGN_CV_TO_GV       => 'CV2GV',
+    OPpBOXRET                => 'BOXRET',
     OPpCONST_BARE            => 'BARE',
     OPpCONST_ENTERED         => 'ENTERED',
     OPpCONST_NOVER           => 'NOVER',
@@ -802,6 +805,7 @@ our %ops_using = (
     OPpALLOW_FAKE            => [qw(rv2gv)],
     OPpASSIGN_BACKWARDS      => [qw(sassign)],
     OPpASSIGN_COMMON_AGG     => [qw(aassign)],
+    OPpBOXRET                => [qw(int_abs int_add int_aelem int_complement int_divide int_eq int_ge int_gt int_le int_lt int_modulo int_multiply int_ne int_negate int_not int_postdec int_postinc int_predec int_preinc int_subtract num_add num_aelem num_atan2 num_cos num_divide num_exp num_log num_multiply num_sin num_sqrt num_subtract str_aelem uint_lshift uint_rshift)],
     OPpCONST_BARE            => [qw(const)],
     OPpCOREARGS_DEREF1       => [qw(coreargs)],
     OPpEARLY_CV              => [qw(gv)],
