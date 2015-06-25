@@ -686,6 +686,7 @@ sub installlib {
     return if $name =~ m{^(?:README(?:\.\w+)?)$} && $name ne 'README.e2x';
     return if $name =~ m{^(?:MANIFEST|META\.yml)$};
     return if $name =~ m{^(?:INSTALL|TODO|BUGS|CREDITS)$}i;
+    return if $name =~ m{^(?:COMMITTERS|HFUNC)$};
     return if $name =~ m{^change(?:s|log)(?:\.libnet)?$}i;
     return if $name =~ m{^(?:SIGNATURE|PAUSE200\d\.pub)$}; # CPAN files
     return if $name =~ m{^(?:NOTES|PATCHING)$}; # ExtUtils files

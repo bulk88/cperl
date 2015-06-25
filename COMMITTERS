@@ -1,0 +1,100 @@
+Always open a ticket and work in branch. When the branch is ready and green, merge.
+Without consensus wait for moderation.
+
+If you are not expert in the field of discussion, please refrain from
+participation.
+
+Committers
+==========
+
+Commit bits are given out easily, depending on competence and trust.
+This list is ordered. Don't be angry when your name is not here. There are hundreds.
+Just open a pull request and someone will merge it, and you'll soon be in the list also.
+
+* rurban	Reini Urban	<rurban@cpanel.net> (lead)
+* lizmat	Elizabeth Mattijsen	<liz@dijkmat.nl>
+* syberrus 	Oleg Pronin	<syber@crazypanda.ru>
+* dur-randir 	Sergey Aleynikov	<randir@cpan.org>
+* ruz		Ruslan Zakirov	<ruz@bestpractical.com>
+* rafl		Florian Ragwitz	<rafl@debian.org>
+* vpit          Vincence Pit	<perl@profvince.com>
+* gfx		Goro Fuji	<gfuji@cpan.org>
+
+Probably:
+
+* jarkko 	Jarkko Hietaniemi	<jhi@iki.fi>
+* tonyc		Tony Cook 	<tony@develop-help.com>
+* rgs		Rafael Garcia-Suarez	<rgs@consttype.org>
+* gsar		Gurusamy Sarathy	<gsar@cpan.org>
+* khw 	    	Karl Williamson	<public@khwilliamson.com>
+* 		Craig A. Berry	<craigberry@mac.com>
+* bingos	Chris 'BinGOs' Williams	<chris@bingosnet.co.uk>
+* 		Steve Hay	<steve.m.hay@googlemail.com>
+* 		Steve Peters 	<steve@fisharerojo.org>
+* 		H.Merijn Brand	<h.m.brand@xs4all.nl>
+* tsee		Steffen Mueller	<smueller@cpan.org>
+* schwern	Michael G. Schwern	<schwern@pobox.com>
+* 		David Golden	<dagolden@cpan.org>
+* 		Jerry D. Hedden	<jdhedden@cpan.org>
+* 		Abigail	<abigail@abigail.be>
+* hv   		Hugo van der Sanden	<hv@crypt.org>
+* jand 		Jan Dubois	<jand@activestate.com>
+* mhx  		Marcus Holland-Moritz	<mhx-perl@gmx.net>
+* 		Gisle Aas	<gisle@aas.no>
+* 		Charles Bailey	<bailey@newman.upenn.edu>
+* 		Matthew Horsfall	<WolfSage@gmail.com>
+* leont		Leon Timmermans
+* 		Andi Koenig akoenig
+* 		Slaven Rezic	<slaven@rezic.de>
+* 		David Cantrell	<david@cantrell.org.uk>
+* 		Andy Armstrong
+* 		Andy Dougherty	<doughera@lafayette.edu>
+* 		Andy Lester	<andy@petdance.com>
+* 		Anton Berezin	<tobez@tobez.org>
+* 		Aristotle Pagaltzis	<pagaltzis@gmx.de>
+* 		Ask Bjöern Hansen	<ask@develooper.com>
+* 		Audrey Tang	<cpan@audreyt.org>
+* 		Bram	<perl-rt@wizbit.be>
+* 		François Perrad	<francois.perrad@gadz.org>
+* ikegami	Eric Brine	<ikegami@adaelis.com>
+* 		Dominic Hargreaves	<dom@earth.li>
+* 		Dr.Ruud	<rvtol+news@isolution.nl>
+* theory	David Wheeler	<david@justatheory.com>
+* dgl		David Leadbeater	<dgl@dgl.cx>
+* autarch	Dave Rolsky			<autarch@urth.org>
+* stevan	Stevan Little			<stevan@cpan.org>
+* noxxi		Steffen Ullrich			<coyote.frank@gmx.net>
+* maddingue	Sébastien Aperghis-Tramoni	<saper@cpan.org>
+* sartak	Shawn M Moore	<sartak@gmail.com>
+* simoncozens	Simon Cozens	<simon@netthink.co.uk>
+* samv		Sam Vilain	<sam@vilain.net>
+* tobyink	Toby Inkster	<mail@tobyinkster.co.uk>
+* 		Tom Christiansen	<tchrist@perl.com>
+* timbunce	Tim Bunce	<Tim.Bunce@ig.co.uk>
+* miyagawa	Tatsuhiko Miyagawa	<miyagawa@bulknews.net>
+* 		Spider Boardman	<spider@orb.nashua.nh.us>
+* bdraco 	Nick Koston
+* lightsey	JD Lightsey
+* bk2204	Brian Carlsson
+* cpanelrikus	Rikus Goodell
+
+
+Blocked
+=======
+
+An apology is missing.
+
+Those are being blocked until enough confident and trust is re-established. 
+These people severely violated the code of conduct or acceptable coding
+quality multiple times (calling names, revert wars, block blocking tickets,
+committing questionable code to master directly, no ticket, ...) or have not
+enough technical capabilities.  They do have voting rights though, and pull
+requests will be handled properly.
+
+* -		Nicholas Clark	<nick@ccl4.org>
+* davem
+* rjbs
+* genehack
+* peregrin
+* mithaldu
+

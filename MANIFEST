@@ -8,6 +8,7 @@ caretx.c		C file to create $^X
 cflags.SH		A script that emits C compilation flags per file
 Changes			Describe how to peruse changes between releases
 charclass_invlists.h	Compiled-in inversion lists
+COMMITTERS		People with commit access
 config_h.SH		Produces config.h
 configpm		Produces lib/Config.pm
 Configure		Portability tool
@@ -4002,6 +4003,7 @@ haiku/Haiku/Haiku.xs		Haiku extension external subroutines
 haiku/haikuish.h		Header for the Haiku port
 haiku/Haiku/Makefile.PL		Haiku extension makefile writer
 handy.h				Handy definitions
+HFUNCS				List of hash functions
 hints/aix_3.sh			Hints for named architecture
 hints/aix_4.sh			Hints for named architecture
 hints/aix.sh			Hints for named architecture
