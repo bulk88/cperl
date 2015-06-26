@@ -12552,7 +12552,7 @@ core_types_t S_op_typed(OP* o)
 PERL_STATIC_INLINE
 const char * S_core_type_name(core_types_t t)
 {
-    return core_types_n[t];
+    return t == type_Void ? "Void" : core_types_n[t];
 }
 
 /* index for the )
