@@ -179,6 +179,13 @@ typedef I64TYPE I64;
 typedef U64TYPE U64;
 #endif
 
+#ifdef PERL_CORE
+#  if !defined(I_STDINT) && !defined(WIN32)
+/* windows, where it would be int, has it defined already, see win32.c */
+typedef long intptr_t
+#  endif
+#endif /* PERL_CORE */
+
 /* INT64_C/UINT64_C are C99 from <stdint.h> (so they will not be
  * available in strict C89 mode), but they are nice, so let's define
  * them if necessary. */
