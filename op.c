@@ -1893,6 +1893,7 @@ Perl_scalarvoid(pTHX_ OP *arg)
         case OP_AELEM:
         case OP_AELEMFAST:
         case OP_AELEMFAST_LEX:
+        case OP_AELEMFAST_LEX_U:
         case OP_ASLICE:
         case OP_HELEM:
         case OP_HSLICE:
@@ -2983,6 +2984,7 @@ Perl_op_lvalue_flags(pTHX_ OP *o, I32 type, U32 flags)
 
     case OP_AELEMFAST:
     case OP_AELEMFAST_LEX:
+    case OP_AELEMFAST_LEX_U:
 	localize = -1;
 	PL_modcount++;
 	break;
@@ -9229,7 +9231,8 @@ Perl_newAVREF(pTHX_ OP *o)
 
     if (o->op_type == OP_PADANY) {
         OpTYPE_set(o, OP_PADAV);
-	return o;
+        /* Note: the op is not yet chained properly */
+	return CHECKOP(OP_PADAV, o);
     }
     else if ((o->op_type == OP_RV2AV || o->op_type == OP_PADAV)) {
 	Perl_croak(aTHX_ "Can't use an array as a reference");
@@ -10783,6 +10786,7 @@ Perl_ck_select(pTHX_ OP *o)
     return o;
 }
 
+/* pop|shift s%	A? */
 OP *
 Perl_ck_shift(pTHX_ OP *o)
 {
@@ -10795,13 +10799,16 @@ Perl_ck_shift(pTHX_ OP *o)
 
 	if (!CvUNIQUE(PL_compcv)) {
 	    o->op_flags |= OPf_SPECIAL;
+            DEBUG_k(deb("ck_shift: %s SPECIAL\n", OP_NAME(o)));
 	    return o;
 	}
 
 	argop = newUNOP(OP_RV2AV, 0, scalar(newGVOP(OP_GV, 0, PL_argvgv)));
+        DEBUG_k(deb("ck_shift: rv2av $_\n"));
 	op_free(o);
 	return newUNOP(type, 0, scalar(argop));
     }
+    DEBUG_k(deb("ck_shift: %s scalar\n", OP_NAME(o)));
     return scalar(ck_fun(o));
 }
 
@@ -12453,6 +12460,122 @@ S_aassign_scan(pTHX_ OP* o, bool rhs, bool top, int *scalars_p)
     return flags;
 }
 
+/* Check for in place reverse and sort assignments like "@a = reverse @a"
+   and modify the optree to make them work inplace */
+
+STATIC void
+S_inplace_aassign(pTHX_ OP *o) {
+
+    OP *modop, *modop_pushmark;
+    OP *oright;
+    OP *oleft, *oleft_pushmark;
+
+    PERL_ARGS_ASSERT_INPLACE_AASSIGN;
+
+    assert((o->op_flags & OPf_WANT) == OPf_WANT_VOID);
+
+    assert(cUNOPo->op_first->op_type == OP_NULL);
+    modop_pushmark = cUNOPx(cUNOPo->op_first)->op_first;
+    assert(modop_pushmark->op_type == OP_PUSHMARK);
+    modop = OpSIBLING(modop_pushmark);
+
+    if (modop->op_type != OP_SORT && modop->op_type != OP_REVERSE)
+	return;
+
+    /* no other operation except sort/reverse */
+    if (OpHAS_SIBLING(modop))
+	return;
+
+    assert(cUNOPx(modop)->op_first->op_type == OP_PUSHMARK);
+    if (!(oright = OpSIBLING(cUNOPx(modop)->op_first))) return;
+
+    if (modop->op_flags & OPf_STACKED) {
+	/* skip sort subroutine/block */
+	assert(oright->op_type == OP_NULL);
+	oright = OpSIBLING(oright);
+    }
+
+    assert(OpSIBLING(cUNOPo->op_first)->op_type == OP_NULL);
+    oleft_pushmark = cUNOPx(OpSIBLING(cUNOPo->op_first))->op_first;
+    assert(oleft_pushmark->op_type == OP_PUSHMARK);
+    oleft = OpSIBLING(oleft_pushmark);
+
+    /* Check the lhs is an array */
+    if (!oleft ||
+	(oleft->op_type != OP_RV2AV && oleft->op_type != OP_PADAV)
+	|| OpHAS_SIBLING(oleft)
+	|| (oleft->op_private & OPpLVAL_INTRO)
+    )
+	return;
+
+    /* Only one thing on the rhs */
+    if (OpHAS_SIBLING(oright))
+	return;
+
+    /* check the array is the same on both sides */
+    if (oleft->op_type == OP_RV2AV) {
+	if (oright->op_type != OP_RV2AV
+	    || !cUNOPx(oright)->op_first
+	    || cUNOPx(oright)->op_first->op_type != OP_GV
+	    || cUNOPx(oleft )->op_first->op_type != OP_GV
+	    || cGVOPx_gv(cUNOPx(oleft)->op_first) !=
+	       cGVOPx_gv(cUNOPx(oright)->op_first)
+	)
+	    return;
+    }
+    else if (oright->op_type != OP_PADAV
+	|| oright->op_targ != oleft->op_targ
+    )
+	return;
+
+    /* This actually is an inplace assignment */
+
+    modop->op_private |= OPpSORT_INPLACE;
+
+    /* transfer MODishness etc from LHS arg to RHS arg */
+    oright->op_flags = oleft->op_flags;
+
+    /* remove the aassign op and the lhs */
+    op_null(o);
+    op_null(oleft_pushmark);
+    if (oleft->op_type == OP_RV2AV && cUNOPx(oleft)->op_first)
+	op_null(cUNOPx(oleft)->op_first);
+    op_null(oleft);
+}
+
+
+/* Check for typed and shaped arrays, and promote ops. */
+OP *
+Perl_ck_aelem(pTHX_ OP *o)
+{
+    PADOFFSET targ = o->op_targ;
+    SV* idx;
+    OP* avop = cBINOPx(o)->op_first;
+    PERL_ARGS_ASSERT_CK_AELEM;
+
+    if (targ) { /* newPADOP sets it, newOP only with OA_TARGET */
+        idx = PAD_SV(targ);
+    }
+    else {
+        OP* ixop = cBINOPx(o)->op_last;
+        idx = OP_TYPE_IS(ixop, OP_CONST) ? cSVOPx(ixop)->op_sv : NULL;
+    }
+    /* compile-time check shaped av with const idx */
+    if (OP_TYPE_IS(avop, OP_PADAV) && avop->op_targ) {
+        AV* av = MUTABLE_AV(PAD_SV(avop->op_targ));
+        if (idx && SvIOK(idx) && AvSHAPED(av)) {
+            IV ix = SvIVX(idx);
+            if (abs(ix) > AvFILL(av))
+                die("Array index out of bounds %s[%"IVdf"]",
+                    PadnamePV(PAD_COMPNAME(avop->op_targ)), ix);
+        }
+        /* TODO specialize to typed ops */
+    }
+    DEBUG_k(deb("ck_%s %s[%"IVdf"]\n", PL_op_name[o->op_type],
+                targ ? PadnamePV(PAD_COMPNAME(targ)) : "?",
+                idx ? SvIV(idx) : -99));
+    return o;
+}
 
 /* Check for const and types.
    Called from newOP/newPADOP this is too early,
@@ -12463,11 +12586,23 @@ Perl_ck_pad(pTHX_ OP *o)
     PERL_ARGS_ASSERT_CK_PAD;
     if (o->op_targ) { /* newPADOP sets it, newOP only with OA_TARGET */
         SV* sv = PAD_SV(o->op_targ);
-        if (SvREADONLY(sv)) {
+        if (OP_TYPE_IS(o, OP_PADSV) && SvREADONLY(sv)) {
             OpTYPE_set(o, OP_CONST);
             cSVOPx(o)->op_sv = sv;
             pad_swipe(o->op_targ, 0);
             o->op_targ = 0;
+        }
+        /* compile-time check invalid ops on shaped av's. duplicate in rpeep
+           when the targ is filled in, or op_next is setup */
+        else if (OP_TYPE_IS(o, OP_PADAV) && AvSHAPED(sv)
+                 && o->op_next && o->op_next->op_next) {
+            OPCODE type = o->op_next->op_next->op_type;
+            /* splice is for now checked at run-time */
+            if (type == OP_PUSH  || type == OP_POP
+             || type == OP_SHIFT || type == OP_UNSHIFT)
+                die("Invalid modification of shaped array: %s %s",
+                    OP_NAME(o->op_next->op_next),
+                    PAD_COMPNAME_PV(o->op_targ));
         }
         /* maybe check typeinfo also, and set some
            SVf_TYPED flag if we still had one. This const
@@ -12675,90 +12810,6 @@ Perl_ck_type(pTHX_ OP *o)
         die("Invalid op %s for ck_type", OP_NAME(o));
     }
     return o;
-}
-
-
-/* Check for in place reverse and sort assignments like "@a = reverse @a"
-   and modify the optree to make them work inplace */
-
-STATIC void
-S_inplace_aassign(pTHX_ OP *o) {
-
-    OP *modop, *modop_pushmark;
-    OP *oright;
-    OP *oleft, *oleft_pushmark;
-
-    PERL_ARGS_ASSERT_INPLACE_AASSIGN;
-
-    assert((o->op_flags & OPf_WANT) == OPf_WANT_VOID);
-
-    assert(cUNOPo->op_first->op_type == OP_NULL);
-    modop_pushmark = cUNOPx(cUNOPo->op_first)->op_first;
-    assert(modop_pushmark->op_type == OP_PUSHMARK);
-    modop = OpSIBLING(modop_pushmark);
-
-    if (modop->op_type != OP_SORT && modop->op_type != OP_REVERSE)
-	return;
-
-    /* no other operation except sort/reverse */
-    if (OpHAS_SIBLING(modop))
-	return;
-
-    assert(cUNOPx(modop)->op_first->op_type == OP_PUSHMARK);
-    if (!(oright = OpSIBLING(cUNOPx(modop)->op_first))) return;
-
-    if (modop->op_flags & OPf_STACKED) {
-	/* skip sort subroutine/block */
-	assert(oright->op_type == OP_NULL);
-	oright = OpSIBLING(oright);
-    }
-
-    assert(OpSIBLING(cUNOPo->op_first)->op_type == OP_NULL);
-    oleft_pushmark = cUNOPx(OpSIBLING(cUNOPo->op_first))->op_first;
-    assert(oleft_pushmark->op_type == OP_PUSHMARK);
-    oleft = OpSIBLING(oleft_pushmark);
-
-    /* Check the lhs is an array */
-    if (!oleft ||
-	(oleft->op_type != OP_RV2AV && oleft->op_type != OP_PADAV)
-	|| OpHAS_SIBLING(oleft)
-	|| (oleft->op_private & OPpLVAL_INTRO)
-    )
-	return;
-
-    /* Only one thing on the rhs */
-    if (OpHAS_SIBLING(oright))
-	return;
-
-    /* check the array is the same on both sides */
-    if (oleft->op_type == OP_RV2AV) {
-	if (oright->op_type != OP_RV2AV
-	    || !cUNOPx(oright)->op_first
-	    || cUNOPx(oright)->op_first->op_type != OP_GV
-	    || cUNOPx(oleft )->op_first->op_type != OP_GV
-	    || cGVOPx_gv(cUNOPx(oleft)->op_first) !=
-	       cGVOPx_gv(cUNOPx(oright)->op_first)
-	)
-	    return;
-    }
-    else if (oright->op_type != OP_PADAV
-	|| oright->op_targ != oleft->op_targ
-    )
-	return;
-
-    /* This actually is an inplace assignment */
-
-    modop->op_private |= OPpSORT_INPLACE;
-
-    /* transfer MODishness etc from LHS arg to RHS arg */
-    oright->op_flags = oleft->op_flags;
-
-    /* remove the aassign op and the lhs */
-    op_null(o);
-    op_null(oleft_pushmark);
-    if (oleft->op_type == OP_RV2AV && cUNOPx(oleft)->op_first)
-	op_null(cUNOPx(oleft)->op_first);
-    op_null(oleft);
 }
 
 
@@ -13559,6 +13610,27 @@ Perl_rpeep(pTHX_ OP *o)
                 break;
 
             case OP_PADAV:
+                /* XXX Note that we don't yet compile-time check a destructive splice.
+                   This needs to be done at run-time. We also need to search to find
+                   the last pushmark arg. shift and push can have multiple args. 
+                   1-arg push is also not caught here. */
+                if (o2->op_next && o2->op_targ && AvSHAPED(PAD_SV(o2->op_targ))) {
+                    /* 1 arg case */
+                    OPCODE type = o2->op_next->op_type;
+                    if (type == OP_PUSH  || type == OP_POP
+                     || type == OP_SHIFT || type == OP_UNSHIFT)
+                        die("Invalid modification of shaped array: %s %s",
+                            OP_NAME(o2->op_next),
+                            PAD_COMPNAME_PV(o2->op_targ));
+                    /* 2 arg case */
+                    if (o2->op_next->op_next) {
+                        OPCODE type = o2->op_next->op_next->op_type;
+                        if (type == OP_PUSH || type == OP_SHIFT)
+                            die("Invalid modification of shaped array: %s %s",
+                                OP_NAME(o2->op_next->op_next),
+                                PAD_COMPNAME_PV(o2->op_targ));
+                    }
+                }
             case OP_PADHV:
                 /*    $lex[..]:  padav[@lex:1,2] sR *
                  * or $lex{..}:  padhv[%lex:1,2] sR */
@@ -14131,15 +14203,33 @@ Perl_rpeep(pTHX_ OP *o)
 		    op_null(pop);
 		    o->op_flags |= pop->op_next->op_flags & OPf_MOD;
 		    o->op_next = pop->op_next->op_next;
-		    o->op_ppaddr = PL_ppaddr[OP_AELEMFAST];
 		    o->op_private = (U8)i;
 		    if (o->op_type == OP_GV) {
 			gv = cGVOPo_gv;
 			GvAVn(gv);
 			o->op_type = OP_AELEMFAST;
+                        o->op_ppaddr = PL_ppaddr[OP_AELEMFAST];
 		    }
-		    else
-			o->op_type = OP_AELEMFAST_LEX;
+		    else {
+                        SV* av = PAD_SV(o->op_targ);
+                        if (AvSHAPED(av)) {
+#ifndef AELEMSIZE_RT_NEGATIVE
+                            if (i < 0) {
+                                IV ix = AvFILL(av)+1+i;
+                                if (ix <= 255)
+                                    o->op_private = (U8)ix;
+                                else
+                                    goto lex;
+                            }
+#endif
+                            o->op_type = OP_AELEMFAST_LEX_U;
+                            o->op_ppaddr = PL_ppaddr[OP_AELEMFAST_LEX_U];
+                        } else {
+                          lex:
+                            o->op_type = OP_AELEMFAST_LEX;
+                            o->op_ppaddr = PL_ppaddr[OP_AELEMFAST];
+                        }
+                    }
 		}
 		if (o->op_type != OP_GV)
 		    break;

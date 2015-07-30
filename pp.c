@@ -5346,6 +5346,8 @@ PP(pp_splice)
 
     newlen = SP - MARK;
     diff = newlen - length;
+    if (AvSHAPED(ary) && diff)
+        Perl_croak_shaped_array("splice");
     if (newlen && !AvREAL(ary) && AvREIFY(ary))
 	av_reify(ary);
 
@@ -5512,6 +5514,7 @@ PP(pp_push)
     }
     else {
 	if (SvREADONLY(ary) && MARK < SP) Perl_croak_no_modify();
+        if (AvSHAPED(ary)) Perl_croak_shaped_array("push");
 	PL_delaymagic = DM_DELAY;
 	for (++MARK; MARK <= SP; MARK++) {
 	    SV *sv;
@@ -5590,6 +5593,7 @@ PP(pp_reverse)
 	    assert( MARK+1 == SP && *SP && SvTYPE(*SP) == SVt_PVAV);
 	    (void)POPMARK; /* remove mark associated with ex-OP_AASSIGN */
 	    av = MUTABLE_AV((*SP));
+            if (AvSHAPED(av)) Perl_croak_shaped_array("reverse");
 	    /* In-place reversing only happens in void context for the array
 	     * assignment. We don't need to push anything on the stack. */
 	    SP = MARK;
