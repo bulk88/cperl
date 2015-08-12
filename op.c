@@ -2555,8 +2555,6 @@ S_finalize_op(pTHX_ OP* o)
               || family == OA_FILESTATOP
               || family == OA_LOOPEXOP
               || family == OA_METHOP
-              /* I don't know why SASSIGN is tagged as OA_BASEOP - DAPM */
-              || type == OP_SASSIGN
               || type == OP_CUSTOM
               || type == OP_NULL /* new_logop does this */
               );
@@ -4944,7 +4942,7 @@ Perl_newBINOP(pTHX_ I32 type, I32 flags, OP *first, OP *last)
     BINOP *binop;
 
     ASSUME((PL_opargs[type] & OA_CLASS_MASK) == OA_BINOP
-	|| type == OP_SASSIGN || type == OP_NULL || type == OP_CUSTOM);
+	|| type == OP_NULL || type == OP_CUSTOM);
 
     NewOp(1101, binop, 1, BINOP);
 
@@ -10285,7 +10283,7 @@ OP *
 Perl_ck_sassign(pTHX_ OP *o)
 {
     dVAR;
-    OP * const kid = cLISTOPo->op_first;
+    OP * const kid = cBINOPo->op_first;
 
     PERL_ARGS_ASSERT_CK_SASSIGN;
 
