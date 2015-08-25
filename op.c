@@ -12624,6 +12624,8 @@ Perl_ck_type(pTHX_ OP *o)
         OP* b = cBINOPx(o)->op_last;
         core_types_t type2 = S_op_typed(b);
         const int n = NUM_OP_TYPE_VARIANTS(typ);
+        /* XXX for entersub/enterxssub we should inspect the return type of the
+           function */
         DEBUG_k(deb("ck_type: %s(%s:%s, %s:%s)\n", PL_op_name[typ],
                     OP_NAME(a), S_core_type_name(type1),
                     OP_NAME(b), S_core_type_name(type2)));
