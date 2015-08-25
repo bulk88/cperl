@@ -1103,6 +1103,7 @@ for (@coretypes) {
 print $oc <<"END";
 };
 
+#ifdef DEBUGGING
 static const char* const
 PL_op_type_str[] = {
 END
@@ -1115,6 +1116,7 @@ for (@ops) {
 print $oc <<"END";
 	\"\",	/* $i: freed */
 };
+#endif /* !DEBUGGING */
 #endif /* !PERL_IN_OP_C */
 
 END
