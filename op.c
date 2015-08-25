@@ -12275,7 +12275,9 @@ core_types_t S_op_typed(OP* o)
 PERL_STATIC_INLINE
 const char * S_core_type_name(core_types_t t)
 {
-    if (t < 0 || t > type_Any)
+    if (t == type_Void)
+        return "Void";
+    else if (t < 0 || t > type_Any)
         die("Invalid coretype index %d\n", t);
     return core_types_n[t];
 }
@@ -12368,6 +12370,8 @@ Perl_ck_type(pTHX_ OP *o)
         OP* b = cBINOPx(o)->op_last;
         core_types_t type2 = S_op_typed(b);
         const int n = NUM_OP_TYPE_VARIANTS(typ);
+        /* XXX for entersub/enterxssub we should inspect the return type of the
+           function */
         DEBUG_k(deb("ck_type: %s(%s:%s, %s:%s)\n", PL_op_name[typ],
                     OP_NAME(a), S_core_type_name(type1),
                     OP_NAME(b), S_core_type_name(type2)));
