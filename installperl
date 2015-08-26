@@ -421,6 +421,14 @@ if ($opts{archname} && ! samepath($installbin, '.') && ($^O ne 'dos') && ! $Is_V
     }
 }
 
+# on -Dperlpath provide that as main executable, and link the main exe to it
+if ($Config{perlpath} ne "$installbin/$perl_verbase$ver$exe_ext") {
+    safe_unlink($Config{perlpath});
+    File::Copy::move("$installbin/$perl_verbase$ver$exe_ext", $Config{perlpath});
+    print "  $Config{perlpath}\n" unless $opts{silent};
+    link($Config{perlpath}, "$installbin/$perl_verbase$ver$exe_ext");
+}
+
 # Offer to install perl in a "standard" location
 
 my $mainperl_is_instperl = 0;
