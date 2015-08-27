@@ -9660,7 +9660,7 @@ Perl_ck_delete(pTHX_ OP *o)
     o->op_private = 0;
     if (o->op_flags & OPf_KIDS) {
 	OP * const kid = cUNOPo->op_first;
-        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME((OP*)kid)));
+        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME(kid)));
 	switch (kid->op_type) {
 	case OP_ASLICE:
 	    o->op_flags |= OPf_SPECIAL;
@@ -9706,7 +9706,7 @@ Perl_ck_eof(pTHX_ OP *o)
 	}
 	o = ck_fun(o);
 	kid = cLISTOPo->op_first;
-        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME((OP*)kid)));
+        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME(kid)));
 	if (kid->op_type == OP_RV2GV)
 	    kid->op_private |= OPpALLOW_FAKE;
     }
@@ -9725,7 +9725,7 @@ Perl_ck_eval(pTHX_ OP *o)
     if (o->op_flags & OPf_KIDS) {
 	SVOP * const kid = (SVOP*)cUNOPo->op_first;
 	assert(kid);
-        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME((OP*)kid)));
+        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME(kid)));
 
 	if (o->op_type == OP_ENTERTRY) {
 	    LOGOP *enter;
@@ -9787,7 +9787,7 @@ Perl_ck_exec(pTHX_ OP *o)
         OP *kid;
 	o = ck_fun(o);
 	kid = OpSIBLING(cUNOPo->op_first);
-        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME((OP*)kid)));
+        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME(kid)));
 	if (kid->op_type == OP_RV2GV)
 	    op_null(kid);
     }
@@ -9805,7 +9805,7 @@ Perl_ck_exists(pTHX_ OP *o)
     DEBUG_k(deb("ck_exists: %s\n", OP_NAME(o)));
     if (o->op_flags & OPf_KIDS) {
 	OP * const kid = cUNOPo->op_first;
-        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME((OP*)kid)));
+        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME(kid)));
 	if (kid->op_type == OP_ENTERSUB || kid->op_type == OP_ENTERXSSUB) {
 	    (void) ref(kid, o->op_type);
 	    if (kid->op_type != OP_RV2CV
@@ -9838,7 +9838,7 @@ Perl_ck_rvconst(pTHX_ OP *o)
 	int iscv;
 	GV *gv;
 	SV * const kidsv = kid->op_sv;
-        DEBUG_k(deb("ck_rvconst: %s %s\n", OP_NAME(o), OP_NAME((OP*)kid)));
+        DEBUG_k(deb("ck_rvconst: %s %s\n", OP_NAME(o), OP_NAME(kid)));
         DEBUG_kv(op_dump(o));
 
 	/* Is it a constant from cv_const_sv()? */
@@ -9914,8 +9914,8 @@ Perl_ck_rvconst(pTHX_ OP *o)
 	    SvFAKE_off(gv);
 	}
     } else {
-        DEBUG_k(deb("ck_rvconst: %s WRONG\n", OP_NAME(o)));
-        DEBUG_kv(op_dump(o));
+        DEBUG_k(deb("ck_rvconst: %s %s\n", OP_NAME(o), OP_NAME(kid)));
+        /*DEBUG_kv(op_dump(o));*/
     }
     return o;
 }
@@ -9936,7 +9936,7 @@ Perl_ck_ftst(pTHX_ OP *o)
     else if (o->op_flags & OPf_KIDS && cUNOPo->op_first->op_type != OP_STUB) {
 	SVOP * const kid = (SVOP*)cUNOPo->op_first;
 	const OPCODE kidtype = kid->op_type;
-        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME((OP*)kid)));
+        DEBUG_k(PerlIO_printf(Perl_debug_log, "\t%s\n", OP_NAME(kid)));
 
 	if (kidtype == OP_CONST && (kid->op_private & OPpCONST_BARE)
 	 && !kid->op_folded) {
