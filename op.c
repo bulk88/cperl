@@ -2871,6 +2871,7 @@ Perl_op_lvalue_flags(pTHX_ OP *o, I32 type, U32 flags)
     case OP_I_MODULO:
     case OP_I_ADD:
     case OP_I_SUBTRACT:
+#ifdef PERL_NATIVE_TYPES
     case OP_UINT_LEFT_SHIFT:
     case OP_UINT_RIGHT_SHIFT:
     case OP_UINT_POW:
@@ -2894,6 +2895,7 @@ Perl_op_lvalue_flags(pTHX_ OP *o, I32 type, U32 flags)
     case OP_NUM_LOG:
     case OP_NUM_SQRT:
     case OP_NUM_POW:
+#endif
 	if (!(o->op_flags & OPf_STACKED))
 	    goto nomod;
 	PL_modcount++;
