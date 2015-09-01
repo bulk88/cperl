@@ -131,7 +131,7 @@ CHANGES
 	- Not do binmode(). Causes more problems than helps.
 	- Perl 5.004 compatibility fixes (Spot by Honza).
 
-2.27  Jan 15 23:00 2003
+2.27  Jan 15.22.10 2003
 	- Patch by slebedev@iwl.net (Sergey Lebedev):
 	- 1) Fixed response packet parsing offsets in ping_icmp.
 	- 2) Added icmp_result method.
