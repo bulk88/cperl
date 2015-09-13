@@ -59,6 +59,7 @@ github repo soon.
 * improved build system (make -s, faster, CC vs LD confusion)
 * hash keys keep the tainted info. see [perlsec](http://perldoc.perl.org/perlsec.html#Taint-mode)
 * fix ops using lexical `$_`
+* readonly packages can be cloned with threads
 
 Most of them only would have a chance to be merged upstream if a
 p5p committer would have written it.
@@ -73,7 +74,6 @@ mistakes. It never happened so far.
 See the github issues: [github.com/perl11/cperl/issues](http://github.com/perl11/cperl/issues)
 
 With 32bit fast-arithmetic optimizations are currently disabled.
-With threads a few IO tests fail. `-Dusethreads` is not recommended for now.
 
 # Branch overview
 
@@ -146,8 +146,6 @@ They also revert some wrong decisions p5p already made.
   class, method and multi keywords but no dispatch, subtyping and type checks yet. in work.
 
 ## Soon
-
-* threads fixes. threads are unstable currently and fail a few IO tests.
 
 * user facing types and classes, multiple dispatch
 
