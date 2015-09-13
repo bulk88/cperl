@@ -8,10 +8,6 @@ addons:
 
 #-m32 misses gdbm for 32bit. wrong probe, would need to download it from somewhere
 
-#compiler:
-#  - gcc
-#  - clang
-
 os:
   - linux
   - osx
@@ -34,8 +30,8 @@ env:
 #   - CONFIGURE_OPTION='-Duselongdouble -Accflags="-march=native"'
 
 script:
-  - ./Configure -des -Dusedevel -Dusecperl -Uversiononly -Dcc=$CC $CONFIGURE_OPTION -Dprefix=$HOME/perl-blead && TEST_JOBS=4 make -s -j4 test_harness && make -s install && $HOME/perl-blead/bin/cperlivp
-after_script:
+  - ./Configure -des -Dusedevel -Dusecperl -Uversiononly -Dcc=$CC $CONFIGURE_OPTION -Dprefix=$HOME/perl-blead && make -j4 -s
+  - TEST_JOBS=4 make -s -j4 test_harness && make -s install && $HOME/perl-blead/bin/cperlivp
 cache:
   apt: true
 
