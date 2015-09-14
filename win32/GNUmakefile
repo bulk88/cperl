@@ -2,7 +2,7 @@
 # Makefile to build perl on Windows using GNU make + gcc + MinGW.
 #
 # This is set up to build a perl.exe that runs off a shared library
-# (perl523.dll).  Also makes individual DLLs for the XS extensions.
+# (perl522.dll).  Also makes individual DLLs for the XS extensions.
 #
 # The easiest way to customize the build process is to use parameters like this:
 #
@@ -173,7 +173,7 @@ USE_LARGE_FILES	:= define
 # set this to additionally provide a statically linked perl-static.exe.
 # Note that dynamic loading will not work with this perl, so you must
 # include required modules statically using the STATIC_EXT or ALL_STATIC
-# variables below. A static library perl523s.lib will also be created.
+# variables below. A static library perl522s.lib will also be created.
 # Ordinary perl.exe is not affected by this option.
 #
 #BUILD_STATIC	:= define
@@ -489,13 +489,13 @@ PL2BAT		= bin\pl2bat.pl
 UTILS		=			\
 		..\utils\h2ph		\
 		..\utils\splain		\
-		..\utils\perlbug	\
+		..\utils\cperlbug	\
 		..\utils\pl2pm 		\
 		..\utils\c2ph		\
 		..\utils\pstruct	\
 		..\utils\h2xs		\
-		..\utils\perldoc	\
-		..\utils\perlivp	\
+		..\utils\cperldoc	\
+		..\utils\cperlivp	\
 		..\utils\libnetcfg	\
 		..\utils\enc2xs		\
 		..\utils\piconv		\
@@ -519,13 +519,13 @@ UTILS		=			\
 
 CFGSH_TMPL	= config.gc
 CFGH_TMPL	= config_H.gc
-PERLIMPLIB	= ..\libperl523$(a)
-PERLSTATICLIB	= ..\libperl523s$(a)
+PERLIMPLIB	= ..\libperl522$(a)
+PERLSTATICLIB	= ..\libperl522s$(a)
 INT64		= long long
 
 # makedef.pl must be updated if this changes, and this should normally
 # only change when there is an incompatible revision of the public API.
-PERLDLL		= ..\perl523.dll
+PERLDLL		= ..\perl522.dll
 
 XCOPY		= xcopy /f /r /i /d /y
 RCOPY		= xcopy /f /r /i /e /d /y
@@ -558,6 +558,7 @@ MICROCORE_SRC	=		\
 		..\pp_pack.c	\
 		..\pp_sort.c	\
 		..\pp_sys.c	\
+		..\pp_type.c	\
 		..\reentr.c	\
 		..\regcomp.c	\
 		..\regexec.c	\
@@ -1128,7 +1129,7 @@ utils: $(PERLEXE) ..\utils\Makefile
 	copy ..\README.tw       ..\pod\perltw.pod
 	copy ..\README.vos      ..\pod\perlvos.pod
 	copy ..\README.win32    ..\pod\perlwin32.pod
-	copy ..\pod\perldelta.pod ..\pod\perl5230delta.pod
+	copy ..\pod\perldelta.pod ..\pod\perl5221delta.pod
 	$(PERLEXE) $(PL2BAT) $(UTILS)
 	$(MINIPERL) -I..\lib ..\autodoc.pl ..
 	$(MINIPERL) -I..\lib ..\pod\perlmodlib.PL -q ..
@@ -1233,8 +1234,8 @@ distclean: realclean
 	    perlsolaris.pod perlsymbian.pod perlsynology.pod perltoc.pod \
 	    perltru64.pod perltw.pod perluniprops.pod perlvos.pod \
 	    perlwin32.pod
-	-cd ..\utils && del /f h2ph splain perlbug pl2pm c2ph pstruct h2xs \
-	    perldoc perlivp libnetcfg enc2xs piconv cpan *.bat \
+	-cd ..\utils && del /f h2ph splain cperlbug pl2pm c2ph pstruct h2xs \
+	    cperldoc cperlivp libnetcfg enc2xs piconv cpan *.bat \
 	    xsubpp pod2html instmodsh json_pp prove ptar ptardiff ptargrep shasum corelist zipdetails
 	-del /f ..\config.sh perlmain.c dlutils.c config.h.new \
 	    perlmainst.c
@@ -1363,18 +1364,18 @@ clean : Extensions_clean _clean
 
 realclean : Extensions_realclean _clean
 
-# Handy way to run perlbug -ok without having to install and run the
-# installed perlbug. We don't re-run the tests here - we trust the user.
+# Handy way to run cperlbug -ok without having to install and run the
+# installed cperlbug. We don't re-run the tests here - we trust the user.
 # Please *don't* use this unless all tests pass.
 # If you want to report test failures, use "gmake nok" instead.
 ok: utils
-	$(PERLEXE) -I..\lib ..\utils\perlbug -ok -s "(UNINSTALLED)"
+	$(PERLEXE) -I..\lib ..\utils\cperlbug -ok -s "(UNINSTALLED)"
 
 okfile: utils
-	$(PERLEXE) -I..\lib ..\utils\perlbug -ok -s "(UNINSTALLED)" -F perl.ok
+	$(PERLEXE) -I..\lib ..\utils\cperlbug -ok -s "(UNINSTALLED)" -F perl.ok
 
 nok: utils
-	$(PERLEXE) -I..\lib ..\utils\perlbug -nok -s "(UNINSTALLED)"
+	$(PERLEXE) -I..\lib ..\utils\cperlbug -nok -s "(UNINSTALLED)"
 
 nokfile: utils
-	$(PERLEXE) -I..\lib ..\utils\perlbug -nok -s "(UNINSTALLED)" -F perl.nok
+	$(PERLEXE) -I..\lib ..\utils\cperlbug -nok -s "(UNINSTALLED)" -F perl.nok
